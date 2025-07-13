@@ -7,6 +7,7 @@ spring:
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+
 mybatis:
   mapper-locations: classpath*:mapper/*.xml  # ???? XML
   type-aliases-package: com.example.logindemo.infrastructure.po
@@ -15,6 +16,7 @@ mybatis:
 jwt:
   secret: your-256-bit-secret-your-256-bit-secret
   expire: 3600000 # 毫秒：1小时
+
 
 
 
