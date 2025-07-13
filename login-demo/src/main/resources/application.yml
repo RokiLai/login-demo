@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: login-demo
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo-login?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml  # ???? XML
+  type-aliases-package: com.example.logindemo.infrastructure.po
+
+
+jwt:
+  secret: your-256-bit-secret-your-256-bit-secret
+  expire: 3600000 # 毫秒：1小时
+
+
+
+
