@@ -2,17 +2,25 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="login-demo" />
+        <module name="login-api" />
+        <module name="login-common" />
+        <module name="login-domain" />
+        <module name="login-infra" />
+        <module name="login-application" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="login-demo" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="login-demo" options="-parameters" />
+      <module name="login-demo" options="" />
     </option>
   </component>
 </project>

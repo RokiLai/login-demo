@@ -26,4 +26,21 @@ public class AccountServiceImpl implements AccountService {
         result.setEmail(account.getEmail()); // 设置 email
         return result;
     }
+
+    @Override
+    public boolean validatePassword(String username, String password) {
+        Account account = accountRepository.findByUsername(username);
+        return account != null && account.matchPassword(password);
+    }
+
+    @Override
+    public boolean updatePassword(String username, String newPassword) {
+        Account account = accountRepository.findByUsername(username);
+        if (account == null) {
+            return false;
+        }
+        account.updatePassword(newPassword);
+        accountRepository.save(account);
+        return true;
+    }
 }
