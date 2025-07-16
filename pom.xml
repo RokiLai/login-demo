@@ -11,7 +11,7 @@
 
     <modules>
         <module>login-api</module>
-        <module>login-application</module>
+        <module>login-service</module>
         <module>login-domain</module>
         <module>login-infra</module>
         <module>login-common</module>
@@ -108,12 +108,17 @@
             <!-- 子模块版本统一管理 -->
             <dependency>
                 <groupId>com.example</groupId>
+                <artifactId>login-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example</groupId>
                 <artifactId>login-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.example</groupId>
-                <artifactId>login-application</artifactId>
+                <artifactId>login-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

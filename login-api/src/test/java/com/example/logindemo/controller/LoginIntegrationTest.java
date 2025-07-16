@@ -5,64 +5,45 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class LoginIntegrationTest {
 
-    @LocalServerPort
-    private int port;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    private WebTestClient webClient() {
-        return WebTestClient.bindToServer()
-                .baseUrl("http://localhost:" + port)
-                .build();
-    }
-
     @Test
     public void testLoginAndAccessProtectedEndpoint() throws Exception {
-        // 1. 构造登录请求
+        // 构造请求
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername("admin");
         loginRequest.setPassword("123456");
 
-        // 2. 发送登录请求并提取 token
-        byte[] responseBytes = webClient().post()
-                .uri("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(objectMapper.writeValueAsString(loginRequest))
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .returnResult()
-                .getResponseBodyContent();
+        // 发送登录请求
+        String responseBody = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-        JsonNode responseJson = objectMapper.readTree(responseBytes);
-        String token = responseJson.path("data").toPrettyString();
+        // 解析响应
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        String token = responseJson.path("data").asText();
+
         assertThat(token).isNotBlank();
-
-        // // 3. 使用 token 访问受保护接口
-        // webClient().get()
-        //         .uri("/api/user/info")
-        //         .header("Authorization", "Bearer " + token)
-        //         .exchange()
-        //         .expectStatus().isOk()
-        //         .expectBody()
-        //         .jsonPath("$.code").isEqualTo(200)
-        //         .jsonPath("$.data.username").isEqualTo("testuser");
-
-        // // 4. 不带 token 访问应返回 401
-        // webClient().get()
-        //         .uri("/api/user/info")
-        //         .exchange()
-        //         .expectStatus().isUnauthorized();
     }
 }

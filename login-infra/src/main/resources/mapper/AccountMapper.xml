@@ -9,26 +9,24 @@
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="email" column="email"/>
-        <result property="role" column="role"/>
     </resultMap>
 
     <select id="findByUsername" resultMap="AccountPOResultMap">
-        SELECT id, username, password, email, role
+        SELECT id, username, password, email
         FROM account
         WHERE username = #{username}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO account (username, password, email, role)
-        VALUES (#{username}, #{password}, #{email}, #{role})
+        INSERT INTO account (username, password, email)
+        VALUES (#{username}, #{password}, #{email})
     </insert>
 
     <update id="update">
         UPDATE account
         SET
         password = #{password},
-        email = #{email},
-        role = #{role}
+        email = #{email}
         WHERE id = #{id}
     </update>
 

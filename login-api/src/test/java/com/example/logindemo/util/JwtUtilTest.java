@@ -1,8 +1,7 @@
 package com.example.logindemo.util;
 
 
-import com.example.logindemo.config.JwtProperties;
-import com.example.logindemo.util.JwtUtil;
+import com.example.logindemo.util.config.JwtProperties;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,5 +9,4 @@ public class AccountPO {
     private String username;
     private String password;
     private String email; // 新增字段
-    private String role;
 }

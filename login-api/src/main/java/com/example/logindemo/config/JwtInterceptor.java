@@ -1,6 +1,10 @@
 package com.example.logindemo.config;
 
 import com.example.logindemo.annotation.PassToken;
+import com.example.logindemo.auth.AccountContextHolder;
+import com.example.logindemo.auth.AccountInfo;
+import com.example.logindemo.infra.reids.RedisUtil;
+import com.example.logindemo.service.AccountService;
 import com.example.logindemo.util.JwtUtil;
 
 import io.jsonwebtoken.JwtException;
@@ -20,12 +24,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtInterceptor.class); // 添加日志记录器
 
-    private final JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
-    public JwtInterceptor(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+    private AccountService accountService;
 
     @Override
     public boolean preHandle(HttpServletRequest request,
@@ -58,16 +61,16 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
 
         try {
-            if (jwtUtil.isTokenExpired(token)) {
+            String username = jwtUtil.parseUsername(token);
+            logger.info("Token 验证通过，用户名: {}", username);
+            AccountInfo accountInfo = accountService.getAccountInfo(username);
+            if (accountInfo == null) {
                 logger.warn("Token 已过期");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token已过期");
                 return false;
             }
-
-            String username = jwtUtil.parseUsername(token);
-            logger.info("Token 验证通过，用户名: {}", username);
             request.setAttribute("username", username); // 可选：写入 request 供 Controller 使用
-
+            AccountContextHolder.set(accountInfo);
         } catch (JwtException e) {
             logger.error("Token 验证失败: {}", e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token无效");
