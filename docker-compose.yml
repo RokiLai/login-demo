@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8.2
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo_login
+      MYSQL_USER: roki
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - login-net
+
+  redis:
+    image: redis:7.2
+    container_name: redis-container
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - login-net
+
+  login-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: login-api-container
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+    networks:
+      - login-net
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  login-net:
+
