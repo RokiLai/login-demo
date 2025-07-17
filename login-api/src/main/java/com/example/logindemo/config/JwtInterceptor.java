@@ -3,7 +3,6 @@ package com.example.logindemo.config;
 import com.example.logindemo.annotation.PassToken;
 import com.example.logindemo.auth.AccountContextHolder;
 import com.example.logindemo.auth.AccountInfo;
-import com.example.logindemo.infra.reids.RedisUtil;
 import com.example.logindemo.service.AccountService;
 import com.example.logindemo.util.JwtUtil;
 
@@ -13,12 +12,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
@@ -30,9 +29,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Autowired
     private AccountService accountService;
-
-    @Value("${spring.data.redis.host}")
-    private String redisHost;
 
     @Override
     public boolean preHandle(HttpServletRequest request,
@@ -68,7 +64,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             String username = jwtUtil.parseUsername(token);
             logger.info("Token 验证通过，用户名: {}", username);
             AccountInfo accountInfo = accountService.getAccountInfo(username);
-            if (accountInfo == null) {
+            if (accountInfo == null || !Objects.equals(accountInfo.getToken(), token)) {
                 logger.warn("Token 已过期");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token已过期");
                 return false;

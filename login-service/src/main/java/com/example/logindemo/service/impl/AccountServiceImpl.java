@@ -74,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
         AccountInfo accountInfo = new AccountInfo();
         accountInfo.setId(account.getId());
         accountInfo.setUsername(account.getUsername());
+        accountInfo.setToken(jwtUtil.generateToken(username));
         if (!CollectionUtils.isEmpty(account.getRoleIds())) {
             //组装角色
             accountInfo.setRole(roleRepo.selectCodeByIds(account.getRoleIds()));

@@ -8,6 +8,7 @@ import java.util.List;
 public class AccountInfo {
     private Long id;
     private String username;
+    private String token;
     private List<String> role;
     private List<String> permissions;
 }
