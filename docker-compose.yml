@@ -41,6 +41,18 @@ services:
     networks:
       - login-net
 
+  login-web:
+    build:
+      context: ../../vue-login-demo
+      dockerfile: Dockerfile
+    container_name: login-web-container
+    ports:
+      - "80:80"
+    depends_on:
+      - login-api
+    networks:
+      - login-net
+
 volumes:
   mysql-data:
   redis-data:
